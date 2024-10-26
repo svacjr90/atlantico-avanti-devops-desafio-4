@@ -50,19 +50,19 @@ Para facilitar a escrita do código também foi instalada a extensão oficial do
 
 No portal da AWS em EC2 > Networking & Security > Key pairs foi criado um novo par de chaves do tipo RSA .pem com nome `bt-avanti`.
 
-## 3 Configuração do código Terraform
+## 4 Configuração do código Terraform
 
 Inicialmente foi clonado o repositório exemplo do desafio: https://github.com/luizcarlos16/bt-dvp-v2-terraform. Seu conteúdo foi copiado para esse repositório atual.
 
 Algumas modificações foram feitas:
 
-### 3.1 Configuração de locals para user_data
+### 4.1 Configuração de locals para user_data
 
 O Terraform possui um recurso chamado [Local values](https://developer.hashicorp.com/terraform/language/values/locals) que permite a configuração de variáveis locais.
 
 Foi criado um arquivo `locals.tf` para manter o conteúdo do user_data para a EC2, removendo a necessidade de manter o `script.sh` no repositório.
 
-### 3.2 Configuração de auto.tfvars
+### 4.2 Configuração de auto.tfvars
 
 Visando não expor meu IP no repositório, foi criado um arquivo `default.auto.tfvars` e em seguida adicionada a linha `*.auto.tfvars` no `.gitignore` do repositório. Nesse arquivo salvei meu IP no seguinte formato:
 
@@ -70,20 +70,20 @@ Visando não expor meu IP no repositório, foi criado um arquivo `default.auto.t
 my_ip = "<IP>/32"
 ```
 
-### 3.3 Melhoria no Security Group
+### 4.3 Melhoria no Security Group
 
 Em seguida defini essa variável no arquivo `variables.tf` e utilizei ela para melhorar a segurança do security group, permitindo acesso/ingress a EC2 apenas a partir do meu IP.
 
-### 3.4 Configuração das tags
+### 4.4 Configuração das tags
 
 Adicionei o bloco [default_tags](https://developer.hashicorp.com/terraform/tutorials/aws/aws-default-tags) na configuração do provider `aws` em `main.tf`, com as tags `Name` e `Desafio`. Essas tags serão adicionadas as tags especificadas individualmente nos recursos.
 
-### 3.5 Mais variáveis
+### 4.5 Mais variáveis
 
 Para melhorar a parametrização do código, criei novas variáveis no `variables.tf`: `key_name`, `instance_type` e `ami`. Em seguida criei o arquivo `default.tfvars`, que não está no `.gitignore`, e adicionei seus valores nele.
 
 
-## 4 Operações com o Terraform
+## 5 Operações com o Terraform
 
 Primeiro formatei o código utilizando o comando [terraform fmt](https://developer.hashicorp.com/terraform/cli/commands/fmt).
 
@@ -271,7 +271,7 @@ Após revisar e parecer ok, executei o `terraform apply -var-file=default.tfvars
 ![Apply](./images/11.png)
 
 
-## Validando o resultado
+## 6 Validando o resultado
 
 Verificou-se que a EC2 foi criada com sucesso:
 
@@ -290,7 +290,7 @@ Checando o website no navegador:
 
 ![Site](./images/14.png)
 
-## Terraform destroy 
+## 7 Terraform destroy 
 
 Para remover a EC2 e o Security Group foi executado `terraform destroy -var-file=default.tfvars`:
 
