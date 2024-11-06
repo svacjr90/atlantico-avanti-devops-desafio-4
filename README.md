@@ -194,14 +194,14 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
 Após revisar e parecer ok, executei o `terraform apply -var-file=default.tfvars`, confirmando a operação:
 
-![Apply](./images/4.png)
+![Apply](./images/04.png)
 
 
 ## 6 Validando o resultado
 
 Verificou-se que a EC2 foi criada com sucesso:
 
-![EC2](./images/12.png)
+![EC2](./images/05.png)
 
 Também foi possível se conectar com a EC2 utilizando SSH:
 
@@ -209,8 +209,6 @@ Também foi possível se conectar com a EC2 utilizando SSH:
 chmod 400 "bt-avanti.pem" #(precisei mover a chave do /mnt/ para ~/ no WSL pois esse comando é para Linux)
 ssh -i "bt-avanti.pem" ubuntu@ec2-(ip)-compute-1.amazonaws.com
 ```
-
-![SSH](./images/05.png)
 
 Checando o website no navegador:
 
