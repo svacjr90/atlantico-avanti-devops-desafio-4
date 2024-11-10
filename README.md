@@ -1,19 +1,16 @@
-# Desafio Docker, Terraform e AWS
+# Desafio Docker
 
-Repositório para salvar as evidências referentes ao desafio de Docker, Terraform e AWS do Bootcamp de DevOps da Atlântico Avanti.
+Repositório para salvar as evidências referentes ao desafio de Docker do Bootcamp de DevOps da Atlântico Avanti.
 
 **Autor**: Sylvio Castanho Jr.
 
 ## 1 Atualização do código
 
-Atualizei o código com o script necessário, que é passado para a EC2 via locals do Terraform, e também copiei a pasta app que contém a aplicação e o Dockerfile.
+Foi adicionado no código a porta 8080 nas regras de entrada do security group, conforme a imagem abaixo:
 
 ![Codigo](./images/01.png)
 
-
-
-
-## 5 Operações com o Terraform
+## 2 Operações com o Terraform
 
 Primeiro rodei `terraform init`:
 
@@ -82,7 +79,7 @@ Terraform will perform the following actions:
           + "Type"    = "web-server"
         }
       + tenancy                              = (known after apply)
-      + user_data                            = "6986cd66497886879852de8c62f7b3f9bb7c87c3"
+      + user_data                            = "5423a03a7c932db839c715cca886f321193fda11"
       + user_data_base64                     = (known after apply)
       + user_data_replace_on_change          = false
       + vpc_security_group_ids               = (known after apply)
@@ -113,7 +110,7 @@ Terraform will perform the following actions:
   # aws_security_group.bt-avantiSG will be created
   + resource "aws_security_group" "bt-avantiSG" {
       + arn                    = (known after apply)
-      + description            = "Allow incoming HTTP, HTTPS e SSH connections."
+      + description            = "Allow incoming TCP 8080, HTTP, HTTPS e SSH connections."
       + egress                 = [
           + {
               + cidr_blocks      = [
@@ -133,7 +130,7 @@ Terraform will perform the following actions:
       + ingress                = [
           + {
               + cidr_blocks      = [
-                  + "(meu-ip)/32",
+                  + "my_ip/32",
                 ]
               + description      = "HTTP to EC2"
               + from_port        = 80
@@ -146,7 +143,7 @@ Terraform will perform the following actions:
             },
           + {
               + cidr_blocks      = [
-                  + "(meu-ip)/32",
+                  + "my_ip/32",
                 ]
               + description      = "HTTPS to EC2"
               + from_port        = 443
@@ -159,7 +156,20 @@ Terraform will perform the following actions:
             },
           + {
               + cidr_blocks      = [
-                  + "(meu-ip)/32",
+                  + "my_ip/32",
+                ]
+              + description      = "Porta Site no EC2"
+              + from_port        = 8080
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8080
+            },
+          + {
+              + cidr_blocks      = [
+                  + "my_ip/32",
                 ]
               + description      = "SSH to EC2"
               + from_port        = 22
@@ -197,7 +207,7 @@ Após revisar e parecer ok, executei o `terraform apply -var-file=default.tfvars
 ![Apply](./images/04.png)
 
 
-## 6 Validando o resultado
+## 3 Validando o resultado
 
 Verificou-se que a EC2 foi criada com sucesso:
 
@@ -210,18 +220,55 @@ chmod 400 "bt-avanti.pem" #(precisei mover a chave do /mnt/ para ~/ no WSL pois 
 ssh -i "bt-avanti.pem" ubuntu@ec2-(ip)-compute-1.amazonaws.com
 ```
 
-Checando o website no navegador:
+## 4 Verificando instalação do Docker
 
-![Site 1](./images/06.png)
+Em seguida rodei os comandos abaixo para verificar a instalação do Docker dentro da EC2:
 
-![Site 2](./images/07.png)
+![DOCKER](./images/06.png)
 
+## 5 Configuração do HTML
 
-## 7 Terraform destroy 
+Foi configurado o conteúdo do arquivo index.html conforme abaixo:
+
+![HTML](./images/07.png)
+
+## 6 Configuração da Dockerfile
+
+Em seguida foi configurado a Dockerfile:
+
+![Dockerfile](./images/08.png)
+
+A imagem Docker foi buildada:
+
+![Imagem](./images/09.png)
+
+Em seguida criei o container da aplicação:
+
+![Run](./images/10.png)
+
+Com isso podemos ver a aplicação no ip público da instância na porta 8080:
+
+![Site](./images/11.png)
+
+## 7 Envio da imagem para DockerHub
+
+Primeiro foi atualizada a tag da imagem conforme abaixo:
+
+![TAG](./images/12.png)
+
+Depois foi feito o push para o DockerHub:
+
+![PUSH](./images/13.png)
+
+Esse foi o resultado:
+
+![DockerHUb](./images/14.png)
+
+## 8 Terraform destroy 
 
 Para remover a EC2 e o Security Group foi executado `terraform destroy -var-file=default.tfvars`:
 
-![Destroy](./images/08.png)
+![Destroy](./images/15.png)
 
 E `aws sso logout` no final.
 
